@@ -1,0 +1,49 @@
+/*
+Estilos para el proyecto de gestor de base de datos
+*/
+/* 
+    Created on : 23-ene-2019, 20:23:58
+    Author     : Ainhoa
+*/
+body {
+    background-color:  #c1fddf;
+}
+
+h1 {
+    text-align: center;
+    color: #303f38;
+}
+
+fieldset {
+    width: 450px;
+    height: 175px;
+    margin: 0 auto;
+    background-color: #ffffff;
+    border-radius: 5px;
+}
+
+legend {
+    font-weight: bold;
+    color: #485f54;
+}
+
+.host, .usuario, .password {
+    margin-bottom: 8px;
+}
+
+.host > input, .usuario > input, .password > input {
+    float: right;
+    margin-right: 20%;
+    width: 170px;
+}
+
+.host > label, .usuario > label, .password > label {
+    margin-left: 20%;
+    font-weight: bold;
+}
+
+input.btnConectar {
+    margin-top: 4px;
+    margin-left: 180px;
+    font-weight: bold;
+}

@@ -4,10 +4,35 @@
  * archivos-clases que se utilizan en el programa
  */
 spl_autoload_register(function($nombre_clase) {
-    require $nombre_clase . '.php';
+    require_once $nombre_clase . '.php';
 });
 
 session_start();
+
+$host = $_POST['host'];
+$user = $_POST['usuario'];
+$pass = $_POST['password'];
+
+//Si paso los parámetros de conexión los leo
+if (isset($_POST['conectar'])) {
+  //Guardo los datos de conexión en variable de sesión
+  $_SESSION['host'] = filter_input(INPUT_POST, 'host');
+  $_SESSION['user'] = filter_input(INPUT_POST, 'user');
+  $_SESSION['pass'] = filter_input(INPUT_POST, 'pass');
+} else {
+  //Si ya he establecido previamente conexión, recojo los datos de sesión
+  $_SESSION['host'] = 'localhost';
+  $_SESSION['user'] = 'root';
+  $_SESSION['pass'] = 'root';
+}
+
+  $conexion = $_SESSION['conexion'];
+  //Si no contendrán null y la conexión fallará y me informará de ello
+
+//Creo un objeto de BD al que le paso la conexión
+$bd = new BD($host, $user, $pass);
+
+
 ?>
 
 <!DOCTYPE html>
@@ -28,7 +53,7 @@ and open the template in the editor.
             <legend>Acceso para la BD</legend>
             <div>
                 <?php
-                // put your code here
+                
                 ?>
             </div>
             <br/>
@@ -46,9 +71,33 @@ and open the template in the editor.
                     <input type="password" name="password">
                 </div>
                 <br/>
-                <input type="submit" value="Conectar" name="login" class="btnConectar"/>
+                <input type="submit" value="Conectar" name="conectar" class="btnConectar"/>
             </form>
         </fieldset>
-
+        <?php
+        if ($_POST['conectar']):
+          //Este método retorna un array indexado con los nombres de las bases de datos
+          $basesDatos = $bd->verBasesDatos();
+          var_dump($basesDatos);
+          $t = [];
+          foreach ($basesDatos as $value) {
+              $t[] = $value['Database'];
+          }
+          ?>
+          <fieldset>
+              <legend>Gestion de las Bases de Datos del host <span><?php echo $bd->getHost(); ?></span></legend>
+              <form action="tablas.php" method="post">
+                  <?php
+                  foreach ($t as $basedato) {
+                    echo "<input type=radio value=$basedato name=basedatos>";
+                    echo "<label for=basedatos>$basedato</label><br />";
+                  }
+                  //Muy importante cerrar la conexión de forma explícita
+                  //$bd->cerrarDB();
+                  ?>
+                  <input type="submit" value="Gestionar">
+              </form>
+          </fieldset>
+        <?php endif ?>
     </body>
 </html>

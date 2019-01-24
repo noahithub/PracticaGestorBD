@@ -1,9 +1,7 @@
 <?php
 
 /* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Clase de Base de Datos
  */
 
 class BD {
@@ -23,25 +21,52 @@ class BD {
      * @param type $host
      * @param type $user
      * @param type $pass
-     * @param type $bd
      */
-    public function __construct($host, $user, $pass, $bd) {
+    public function __construct($host, $user, $pass) {
         $this->host = $host;
         $this->user = $user;
         $this->pass = $pass;
-        $this->bd = $bd;
-        $this->conexion = $this->conexion();
     }
 
     /**
      * 
      * @return \mysqli
      */
-    private function conexion(){
-        $conexion = new mysqli($this->host, $this->user, $this->pass, $this->bd);
-        if ($conexion->connect_errno){
-            $this->info = "Error conectando...<b>" . $conexion->connect_error . "</b>";
+//    private function conexion(){
+//        $conexion = new mysqli($this->host, $this->user, $this->pass, $this->bd);
+//        if ($conexion->connect_errno){
+//            $this->info = "Error conectando...<b>" . $conexion->connect_error . "</b>";
+//        }
+//        return $conexion;
+//    }
+    
+    public function verBasesDatos(){
+        try {
+            //echo "$this->host, $this->user, $this->pass";
+            $conexion = new PDO("mysql:host=" . $this->host, $this->user, $this->pass);
+            $sentencia = $conexion->prepare("show databases");
+            $sentencia->execute();
+            while ($fila = $sentencia->fetch(PDO::FETCH_ASSOC)) {
+                $filas[] = $fila;
+            }
+            return $filas;
+        } catch (Exception $ex) {
+            die("Error conectando a la base de datos " . $ex->getMessage());
         }
-        return $conexion;
     }
+
+    public function getHost() {
+        return $this->host;
+    }
+
+    public function setHost($host) {
+        $this->host = $host;
+    }
+
+    /**
+     * Función con la que se cierra la conexión
+     */
+//    public function cerrarBD() {
+//        $this->conexion->close();
+//    }
 }

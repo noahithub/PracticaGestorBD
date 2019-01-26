@@ -27,6 +27,10 @@ legend {
     color: #485f54;
 }
 
+legend > span.nomInfo {
+    color: #ff7456;
+}
+
 .host, .usuario, .password {
     margin-bottom: 8px;
 }
@@ -42,7 +46,7 @@ legend {
     font-weight: bold;
 }
 
-input.btnConectar {
+input.btnConectar, input.btnGestionar {
     margin-top: 4px;
     margin-left: 180px;
     font-weight: bold;

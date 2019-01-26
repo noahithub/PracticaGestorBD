@@ -22,23 +22,24 @@ class BD {
      * @param type $user
      * @param type $pass
      */
-    public function __construct($host, $user, $pass) {
-        $this->host = $host;
-        $this->user = $user;
-        $this->pass = $pass;
+    public function __construct($conexion) {
+        $this->host = $conexion['host'];
+        $this->user = $conexion['user'];
+        $this->pass = $conexion['pass'];
+        //var_dump($conexion);
     }
 
     /**
      * 
-     * @return \mysqli
+     * @return
      */
-//    private function conexion(){
-//        $conexion = new mysqli($this->host, $this->user, $this->pass, $this->bd);
-//        if ($conexion->connect_errno){
-//            $this->info = "Error conectando...<b>" . $conexion->connect_error . "</b>";
-//        }
-//        return $conexion;
-//    }
+    private function conexion(){
+        $conexion = new PDO($this->host, $this->user, $this->pass, $this->bd);
+        if ($conexion->connect_errno){
+            $this->info = "Error conectando...<b>" . $conexion->connect_error . "</b>";
+        }
+        return $conexion;
+    }
     
     public function verBasesDatos(){
         try {
@@ -55,6 +56,17 @@ class BD {
         }
     }
 
+    /* Realizar método para visualizar el nombre de los campos de las tablas
+     * desde el fichero gestionarTabla
+     */
+    public function nombreCampos($tabla) {
+        $sentencia = "select * from $tabla";
+    }
+    
+    /**
+     * 
+     * @return type
+     */
     public function getHost() {
         return $this->host;
     }
@@ -66,7 +78,7 @@ class BD {
     /**
      * Función con la que se cierra la conexión
      */
-//    public function cerrarBD() {
-//        $this->conexion->close();
-//    }
+    public function cerrarBD() {
+        $this->conexion->close();
+    }
 }

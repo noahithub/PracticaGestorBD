@@ -9,16 +9,16 @@ spl_autoload_register(function($nombre_clase) {
 
 session_start();
 
-$host = $_POST['host'];
-$user = $_POST['usuario'];
-$pass = $_POST['password'];
+$host = filter_input(INPUT_POST, 'host');
+$user = filter_input(INPUT_POST, 'usuario');
+$pass = filter_input(INPUT_POST, 'password');
 
 //Si paso los parámetros de conexión los leo
 if (isset($_POST['conectar'])) {
   //Guardo los datos de conexión en variable de sesión
-  $_SESSION['host'] = filter_input(INPUT_POST, 'host');
-  $_SESSION['user'] = filter_input(INPUT_POST, 'user');
-  $_SESSION['pass'] = filter_input(INPUT_POST, 'pass');
+  $_SESSION['conexion']['host'] = filter_input(INPUT_POST, 'host');
+  $_SESSION['conexion']['user'] = filter_input(INPUT_POST, 'usuario');
+  $_SESSION['conexion']['pass'] = filter_input(INPUT_POST, 'password');
 } else {
   //Si ya he establecido previamente conexión, recojo los datos de sesión
   $_SESSION['host'] = 'localhost';
@@ -29,8 +29,8 @@ if (isset($_POST['conectar'])) {
   $conexion = $_SESSION['conexion'];
   //Si no contendrán null y la conexión fallará y me informará de ello
 
-//Creo un objeto de BD al que le paso la conexión
-$bd = new BD($host, $user, $pass);
+//Creo un objeto de BD al que le paso los datos de la conexión
+$bd = new BD($conexion);
 
 
 ?>
@@ -75,17 +75,18 @@ and open the template in the editor.
             </form>
         </fieldset>
         <?php
-        if ($_POST['conectar']):
+        if (filter_input(INPUT_POST, 'conectar')):
           //Este método retorna un array indexado con los nombres de las bases de datos
           $basesDatos = $bd->verBasesDatos();
-          var_dump($basesDatos);
+          //var_dump($basesDatos);
           $t = [];
           foreach ($basesDatos as $value) {
               $t[] = $value['Database'];
           }
           ?>
+        <br/>
           <fieldset>
-              <legend>Gestion de las Bases de Datos del host <span><?php echo $bd->getHost(); ?></span></legend>
+              <legend>Gestion de las Bases de Datos del host <span class="nomInfo"><?php echo $bd->getHost(); ?></span></legend>
               <form action="tablas.php" method="post">
                   <?php
                   foreach ($t as $basedato) {
@@ -95,7 +96,8 @@ and open the template in the editor.
                   //Muy importante cerrar la conexión de forma explícita
                   //$bd->cerrarDB();
                   ?>
-                  <input type="submit" value="Gestionar">
+                  <br/>
+                  <input type="submit" value="Gestionar" class="btnGestionar">
               </form>
           </fieldset>
         <?php endif ?>

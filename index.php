@@ -7,32 +7,56 @@ spl_autoload_register(function($nombre_clase) {
     require_once $nombre_clase . '.php';
 });
 
+//Iniciamos la sesión
 session_start();
 
-$host = filter_input(INPUT_POST, 'host');
-$user = filter_input(INPUT_POST, 'usuario');
-$pass = filter_input(INPUT_POST, 'password');
+$muestra = false;
 
-//Si paso los parámetros de conexión los leo
-if (isset($_POST['conectar'])) {
-  //Guardo los datos de conexión en variable de sesión
-  $_SESSION['conexion']['host'] = filter_input(INPUT_POST, 'host');
-  $_SESSION['conexion']['user'] = filter_input(INPUT_POST, 'usuario');
-  $_SESSION['conexion']['pass'] = filter_input(INPUT_POST, 'password');
-} else {
-  //Si ya he establecido previamente conexión, recojo los datos de sesión
-  $_SESSION['host'] = 'localhost';
-  $_SESSION['user'] = 'root';
-  $_SESSION['pass'] = 'root';
+//Si hacemos click en un botón
+if (isset($_POST['submit'])) {
+//Si hacemos click en el botón de Conectar
+    if (isset($_POST['Conectar'])) {
+        //Guardo los datos de conexión en variable de sesión
+        $_SESSION['conexion']['host'] = filter_input(INPUT_POST, 'host');
+        $_SESSION['conexion']['user'] = filter_input(INPUT_POST, 'usuario');
+        $_SESSION['conexion']['pass'] = filter_input(INPUT_POST, 'password');
+    }
+    //Si hay conexión, la guardamos en una variable
+    if (isset($_SESSION['conexion'])) {
+        $conexion = $_SESSION['conexion'];
+    } else {
+        //Si ya he establecido previamente conexión, recojo los datos de sesión
+        $_SESSION['conexion']['host'] = 'localhost';
+        $_SESSION['conexion']['user'] = 'root';
+        $_SESSION['conexion']['pass'] = 'root';
+    }
+    //Volvemos a recuperar la conexión
+    $conexion = $_SESSION['conexion'];
+
+    //Creo un objeto de BD al que le paso los datos de la conexión
+    $bd = new BD($conexion);
+    
+    //Almacenamos en $basedatos lo que nos devuelve el método verBaseDatos
+    $basedatos = $bd->verBasesDatos();
+
+    //Comprobamos si la base de datos es distinta de null, lo recorremos
+    if ($basedatos != null) {
+        $t = [];
+        foreach ($basedatos as $value) {
+            $t[] = $value['Database'];
+        }
+        $muestra = true;
+    }
+  
 }
 
-  $conexion = $_SESSION['conexion'];
-  //Si no contendrán null y la conexión fallará y me informará de ello
-
-//Creo un objeto de BD al que le paso los datos de la conexión
-$bd = new BD($conexion);
-
-
+//Comprobamos si se ha hecho click en una base de datos
+//Y recogemos la basededatos y la almacenamos en una variable de sesión
+if (isset($_POST['basedatos'])) {
+    $_SESSION['basedatos'] = $_POST['basedatos'];
+    header("Location:tablas.php");
+    exit();
+}
 ?>
 
 <!DOCTYPE html>
@@ -52,9 +76,7 @@ and open the template in the editor.
         <fieldset>
             <legend>Acceso para la BD</legend>
             <div>
-                <?php
-                
-                ?>
+
             </div>
             <br/>
             <form name="acceso" action="." method="POST" enctype="multipart/form-data">
@@ -71,35 +93,28 @@ and open the template in the editor.
                     <input type="password" name="password">
                 </div>
                 <br/>
-                <input type="submit" value="Conectar" name="conectar" class="btnConectar"/>
+                <input type="submit" value="Conectar" name="submit" class="btnConectar"/>
             </form>
         </fieldset>
-        <?php
-        if (filter_input(INPUT_POST, 'conectar')):
-          //Este método retorna un array indexado con los nombres de las bases de datos
-          $basesDatos = $bd->verBasesDatos();
-          //var_dump($basesDatos);
-          $t = [];
-          foreach ($basesDatos as $value) {
-              $t[] = $value['Database'];
-          }
-          ?>
-        <br/>
-          <fieldset>
-              <legend>Gestion de las Bases de Datos del host <span class="nomInfo"><?php echo $bd->getHost(); ?></span></legend>
-              <form action="tablas.php" method="post">
-                  <?php
-                  foreach ($t as $basedato) {
-                    echo "<input type=radio value=$basedato name=basedatos>";
-                    echo "<label for=basedatos>$basedato</label><br />";
-                  }
-                  //Muy importante cerrar la conexión de forma explícita
-                  //$bd->cerrarDB();
-                  ?>
-                  <br/>
-                  <input type="submit" value="Gestionar" class="btnGestionar">
-              </form>
-          </fieldset>
-        <?php endif ?>
+            <br/>
+            
+            <?php
+            if($muestra){
+                echo "<fieldset>";
+                echo "<legend>Bases de Datos del host <span class='nomInfo'>" . $bd->getHost() . "</span></legend>";
+                echo "<form action='index.php' method='post'>";
+            foreach ($t as $basedato) {
+                echo "<input type='submit' value='$basedato' name='basedatos'><br/>";
+                //echo "<label for='basedatos'>$basedato</label><br />";
+            }
+            //Muy importante cerrar la conexión de forma explícita
+            //$bd->cerrarDB();
+            
+                    //<br/>
+                    //<input type="submit" value="Gestionar" name="gestionar" class="btnGestionar">
+               echo "</form>";
+            }
+            ?>
+            </fieldset>
     </body>
 </html>

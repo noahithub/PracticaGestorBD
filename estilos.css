@@ -46,7 +46,7 @@ legend > span.nomInfo {
     font-weight: bold;
 }
 
-input.btnConectar, input.btnGestionar {
+input.btnConectar {
     margin-top: 4px;
     margin-left: 180px;
     font-weight: bold;

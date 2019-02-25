@@ -51,3 +51,8 @@ input.btnConectar {
     margin-left: 180px;
     font-weight: bold;
 }
+
+.gTabla, .gestionTabla {
+    width: auto;
+    height: auto;
+}

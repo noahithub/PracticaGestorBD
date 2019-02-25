@@ -83,8 +83,16 @@ class BD {
     /* Realizar método para visualizar el nombre de los campos de las tablas
      * desde el fichero gestionarTabla
      */
-    public function nombreCampos($tabla) {
-        $sentencia = "select * from $tabla";
+    public function nombreCampos(string $table_name) {
+        $campos = [];
+        $sentencia = "select * from $table_name";
+        $resultado=$this->conexion->prepare($sentencia);
+        $resultado->execute();
+        $campos_obj=$resultado->fetch(PDO::FETCH_ASSOC);
+        foreach ($campos_obj as $campo) {
+            $campos[]=$campo->name;
+        }
+        return $campos;
     }
 
     /**

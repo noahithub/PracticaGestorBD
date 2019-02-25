@@ -35,7 +35,7 @@ $basedatos = $_SESSION['basedatos'];
 //Y recogemos la tabla y la almacenamos en una variable de sesión
   if (isset($_POST['nomTabla'])) {
     $_SESSION['nomTabla'] = $_POST['nomTabla'];
-    header("Location:editar.php");
+    header("Location:gestionarTabla.php");
     exit();
 }
   ?>
